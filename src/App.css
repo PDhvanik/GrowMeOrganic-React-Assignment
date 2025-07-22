@@ -1,7 +1,14 @@
+body {
+  background: #f4f6fa;
+  font-family: 'Segoe UI', Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
 #root {
   max-width: 1280px;
   margin: 0 auto;
-  padding: 2rem;
+  padding: 1rem;
   text-align: center;
 }
 
@@ -11,9 +18,11 @@
   will-change: filter;
   transition: filter 300ms;
 }
+
 .logo:hover {
   filter: drop-shadow(0 0 2em #646cffaa);
 }
+
 .logo.react:hover {
   filter: drop-shadow(0 0 2em #61dafbaa);
 }
@@ -22,6 +31,7 @@
   from {
     transform: rotate(0deg);
   }
+
   to {
     transform: rotate(360deg);
   }
@@ -32,11 +42,137 @@
     animation: logo-spin infinite 20s linear;
   }
 }
-
 .card {
-  padding: 2em;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+  padding: 1rem 1.5rem;
+  max-width: 1200px;
 }
 
-.read-the-docs {
-  color: #888;
+.p-datatable {
+  border-radius: 12px;
+  overflow: hidden;
+  background: #fafbfc;
+  font-family: 'Segoe UI', Arial, sans-serif;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+}
+
+.p-datatable-thead>tr>th {
+  background: #f0f4f8;
+  color: #333;
+  font-weight: 600;
+  font-size: 1rem;
+  padding: 1rem 0.75rem;
+  border: none;
+}
+
+.p-datatable-tbody>tr {
+  transition: background 0.2s;
+}
+
+.p-datatable-tbody>tr.p-highlight {
+  background: #e6fcff !important;
+}
+
+.p-datatable-tbody>tr>td {
+  font-size: 1rem;
+  color: #222;
+  padding: 0.85rem 0.75rem;
+  border: none;
+}
+
+.p-datatable-tbody>tr:nth-child(even):not(.p-highlight)>td {
+  background: #f7fafd;
+}
+
+.p-column-title {
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.p-checkbox-box>input[type="checkbox"],
+.p-checkbox>input[type="checkbox"] {
+  position: static;
+  opacity: 1;
+  pointer-events: auto;
+  width: 22px;
+  height: 22px;
+  margin: 0;
+  padding: 0;
+  accent-color: #00bcd4;
+  border-radius: 6px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+  transition: accent-color 0.2s;
+  cursor: pointer;
+}
+
+.p-checkbox-icon {
+  display: none !important;
+}
+
+.p-checkbox-box {
+  border: none !important;
+  background: transparent !important;
+  width: auto;
+  height: auto;
+  box-shadow: none !important;
+}
+
+.p-paginator {
+  margin-top: 2rem;
+  justify-content: center;
+  background: transparent;
+}
+
+.p-paginator .p-paginator-pages .p-paginator-page.p-highlight {
+  background: #00bcd4;
+  color: #fff;
+  border-radius: 6px;
+}
+
+.loading {
+  font-size: 1.5rem;
+  color: #00bcd4;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+  padding: 2rem 3rem;
+  margin: 5rem auto;
+  display: inline-block;
+  letter-spacing: 0.03em;
+  font-weight: 500;
+}
+
+@media (max-width: 900px) {
+  .card {
+    padding: 1rem;
+    max-width: 100vw;
+  }
+
+  .p-datatable {
+    font-size: 0.95rem;
+  }
+
+  .loading {
+    padding: 1.5rem 1rem;
+    font-size: 1.1rem;
+  }
+}
+
+.p-paginator-current{
+  color: black;
+  margin:0 4px;
+}
+
+.p-paginator-element{
+  margin:0 6px;
+}
+
+.p-column-header-content{
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
 }
