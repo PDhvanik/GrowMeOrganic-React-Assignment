@@ -1,5 +1,5 @@
 body {
-  background: #f4f6fa;
+  background: #178e98;
   font-family: 'Segoe UI', Arial, sans-serif;
   margin: 0;
   padding: 0;
@@ -43,7 +43,7 @@ body {
   }
 }
 .card {
-  background: #fff;
+  background: rgb(255, 255, 255);
   border-radius: 16px;
   box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
   padding: 1rem 1.5rem;
@@ -102,7 +102,6 @@ body {
   padding: 0;
   accent-color: #00bcd4;
   border-radius: 6px;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
   transition: accent-color 0.2s;
   cursor: pointer;
 }
@@ -171,8 +170,48 @@ body {
 
 .p-column-header-content{
   width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
 
+}
+
+#pi-chevron-down{
+  background: #00bcd4;
+  height: 1.5rem;
+  width: 1.5rem;
+  padding: 0.5rem;
+  border-radius: 2px;
+  margin-right: 0.8rem;
+}
+
+.pi-chevron-down{
+  text-align: center;
+  color: black;
+  font-size: 12px;
+}
+
+.p-overlaypanel-content{
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 1rem;
+  background: #d9eff4;
+  border-radius: 8px;
+}
+
+.p-button{
+  width: 100%;
+  height: 2rem;
+  background: #00bcd4;
+  color: white;
+  border-radius: 4px;
+  border: none;
+  font-size: 0.9rem;
+}
+
+.p-inputtext{
+  width: 100%;
+  height: 2rem;
+  border-radius: 4px;
+  border: none;
+  padding: 0.5rem;
+  font-size: 0.9rem;
 }

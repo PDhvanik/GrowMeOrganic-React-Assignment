@@ -1,10 +1,13 @@
+import 'primeicons/primeicons.css';
+import { Button } from 'primereact/button';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
-import React, { useEffect, useState } from 'react';
-import './App.css';
+import { InputText } from 'primereact/inputtext';
+import { OverlayPanel } from 'primereact/overlaypanel';
 import { Paginator } from 'primereact/paginator';
-
-import { InputSwitch } from 'primereact/inputswitch';
+import React, { useEffect, useRef, useState } from 'react';
+import './App.css';
+import type { PaginatorPageChangeEvent } from 'primereact/paginator';
 
 
 interface TableData {
@@ -17,7 +20,7 @@ interface TableData {
   date_end: number;
 }
 
-interface PaginationDetails{
+interface PaginationDetails {
   total: number;
   limit: number;
   offset: number;
@@ -30,7 +33,7 @@ function App() {
   const [products, setProducts] = useState<TableData[]>([]);
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(true);
-  const [selectedProducts, setSelectedProducts] = useState<TableData[]>([]);
+  const [selectedProducts, setSelectedProducts] = useState<number[]>([]);
   const [PaginationDetails, setPaginationDetails] = useState<PaginationDetails>({
     total: 0,
     limit: 12,
@@ -39,30 +42,36 @@ function App() {
     total_pages: 0,
     next_url: ''
   });
-  const [rowClick, setRowClick] = useState(true);
+  const [selectRange, setSelectRange] = useState<string>('');
+  const op = useRef<OverlayPanel>(null);
 
-  const onPageChange = (e: any) => {
+  const handleSelectionWithNumber = () => {
+    const numRows = Number(selectRange);
+    if (numRows >= 1 && numRows <= products.length) {
+      const selectedIds = products.slice(0, numRows).map(p => p.id);
+      const merged = Array.from(new Set([...selectedProducts, ...selectedIds]));
+      setSelectedProducts(merged);
+      op.current?.hide();
+    }
+  };
+
+  const onPageChange = (e: PaginatorPageChangeEvent) => {
     const pageValue = Math.ceil(e.first / e.rows) + 1;
-    if(page=== pageValue) return;
+    if (page === pageValue) return;
     setPage(pageValue);
     setLoading(true);
   }
 
   const getCurrentPageSelection = () => {
-    return products.filter(product =>
-      selectedProducts.some(selected => selected.id === product.id)
-    );
+    return products.filter(product => selectedProducts.includes(product.id));
   };
 
   const handleSelectionChange = (e: any) => {
     const newSelection: TableData[] = e.value;
+    const newIds = newSelection.map(p => p.id);
     const currentPageIds = products.map(p => p.id);
-
-    const otherSelections = selectedProducts.filter(
-      sel => !currentPageIds.includes(sel.id)
-    );
-    
-    setSelectedProducts([...otherSelections, ...newSelection]);
+    const otherIds = selectedProducts.filter(id => !currentPageIds.includes(id));
+    setSelectedProducts([...otherIds, ...newIds]);
   };
 
   useEffect(() => {
@@ -90,27 +99,47 @@ function App() {
         console.error('Error fetching data:', error);
         setLoading(false);
       }
-    )
+      )
   }, [page]);
 
-  if(loading) {
+  if (loading) {
     return <div className="loading">Loading...</div>;
   }
 
   return (
     <div className="card">
       <DataTable value={products} selectionMode={'checkbox'} selection={getCurrentPageSelection()} onSelectionChange={handleSelectionChange} dataKey="id" tableStyle={{ minWidth: '50rem', marginBottom: '2rem' }}
-      scrollable={true} scrollHeight="80vh"
+        scrollable={true} scrollHeight="80vh"
       >
-        <Column selectionMode="multiple"></Column>
-        <Column field="title" header="Title"></Column>
+        <Column selectionMode="multiple"
+        ></Column>
+        <Column field="title"
+          header={
+            <>
+              <Button id='pi-chevron-down' type="button" icon="pi pi-chevron-down" onClick={(e) => op.current?.toggle(e)}
+                tooltip="Select Rows In Range"
+                tooltipOptions={{ position: 'bottom' }} />
+              Title
+            </>
+          }
+        ></Column>
         <Column field="place_of_origin" header="Place Of Origin"></Column>
         <Column field="artist_display" header="Artist Display"></Column>
         <Column field="inscriptions" header="Inscriptions"></Column>
         <Column field="date_start" header="Date Start"></Column>
         <Column field="date_end" header="Date End"></Column>
       </DataTable>
-      <Paginator first={(page - 1) * 12} rows={PaginationDetails.limit} totalRecords={PaginationDetails.total} onPageChange={onPageChange} template={{ layout: 'PrevPageLink PageLinks NextPageLink CurrentPageReport' }}/>
+      <Paginator first={(page - 1) * 12} rows={PaginationDetails.limit} totalRecords={PaginationDetails.total} onPageChange={onPageChange} template={{ layout: 'PrevPageLink PageLinks NextPageLink CurrentPageReport' }} />
+      <OverlayPanel ref={op}>
+        <InputText min={1} max={PaginationDetails.total} value={selectRange} onChange={(e) => setSelectRange(e.target.value.replace(/\D/, ''))} placeholder='Select Rows...' />
+        <Button type="button" icon="" label='Submit' onClick={handleSelectionWithNumber}
+          disabled={
+            !selectRange ||
+            Number(selectRange) < 1 ||
+            Number(selectRange) > PaginationDetails.total
+          }
+        />
+      </OverlayPanel>
     </div>
   );
 }
