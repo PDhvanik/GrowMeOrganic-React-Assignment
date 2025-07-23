@@ -9,7 +9,7 @@ body {
 #root {
   width:98vw;
   margin: 0 auto;
-  text-align: center;
+  /* text-align: center; */
 }
 
 .logo {
@@ -152,10 +152,14 @@ body {
   border-radius: 12px;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
   padding: 2rem 3rem;
-  margin: 5rem auto;
+  margin: auto;
   display: inline-block;
   letter-spacing: 0.03em;
   font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  max-width: 60vw;
 }
 
 @media (max-width: 900px) {

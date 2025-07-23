@@ -48,9 +48,16 @@ function App() {
 
 
   const handleSelectionWithNumber = () => {
-    
-    const from = Number(selectRange.slice(0, selectRange.indexOf('-')));
-    const to = Number(selectRange.slice(selectRange.indexOf('-') + 1));
+    let from = 0;
+    let to = 0;
+    if (!selectRange.includes('-')) {
+      from = 1;
+      to = Number(selectRange);
+    }
+    else {
+      from = Number(selectRange.slice(0, selectRange.indexOf('-')));
+      to = Number(selectRange.slice(selectRange.indexOf('-') + 1));
+    }
 
     const numRows = to - from + 1;
     if (numRows >= 1 && numRows <= PaginationDetails.total) {
@@ -115,7 +122,7 @@ function App() {
   }, [page]);
 
   if (loading) {
-    return <div className="loading">Loading...</div>;
+    return <div className="loading" >Loading...</div>;
   }
 
   return (
@@ -130,17 +137,17 @@ function App() {
       >
         <Column selectionMode="multiple"
         ></Column>
-        <Column field="id" header={
-          <>
-            <Button id='pi-chevron-down' type="button" icon="pi pi-chevron-down" onClick={(e) => op.current?.toggle(e)}
-        />
-            Sr. No.
-          </>
-        }
+        {/* <Column field="id" header=''
           style={{ minWidth: '7rem' }}
-        ></Column>
+        ></Column> */}
         <Column field="title"
-          header='Title'
+          header={
+            <>
+              <Button id='pi-chevron-down' type="button" icon="pi pi-chevron-down" onClick={(e) => op.current?.toggle(e)}
+              />
+              Title
+            </>
+          }
           style={{ minWidth: '10rem' }}
         ></Column>
         <Column field="place_of_origin" header="Place Of Origin"></Column>
@@ -151,7 +158,7 @@ function App() {
       </DataTable>
       <Paginator first={(page - 1) * 12} rows={PaginationDetails.limit} totalRecords={PaginationDetails.total} onPageChange={onPageChange} template={{ layout: 'FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport' }} />
       <OverlayPanel ref={op}>
-        <InputText min={1} max={PaginationDetails.total} value={selectRange} onChange={(e) => setSelectRange(e.target.value)} placeholder='Select Rows... [from-to]' />
+        <InputText min={1} max={PaginationDetails.total} value={selectRange} onChange={(e) => setSelectRange(e.target.value)} placeholder='Select Rows...' />
         <Button type="button" icon="" label='Submit' onClick={handleSelectionWithNumber}
           disabled={
             !selectRange ||
