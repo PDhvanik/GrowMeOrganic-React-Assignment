@@ -8,6 +8,7 @@ import { Paginator } from 'primereact/paginator';
 import { useEffect, useRef, useState } from 'react';
 import './App.css';
 import type { PaginatorPageChangeEvent } from 'primereact/paginator';
+import { ToastContainer,toast } from 'react-toastify';
 
 
 interface TableData {
@@ -45,15 +46,23 @@ function App() {
   const [selectRange, setSelectRange] = useState<string>('');
   const op = useRef<OverlayPanel>(null);
 
+
   const handleSelectionWithNumber = () => {
     
     const from = Number(selectRange.slice(0, selectRange.indexOf('-')));
     const to = Number(selectRange.slice(selectRange.indexOf('-') + 1));
-    console.log(from, to);
+
     const numRows = to - from + 1;
     if (numRows >= 1 && numRows <= PaginationDetails.total) {
       setSelectedIds([...selectedIds, ...Array.from({ length: numRows }, (_, i) => from + i)]);
+      toast.success(`Selected ${numRows} rows from ${from} to ${to}`);
+      op.current?.hide();
     }
+    else {
+      toast.info(`Please select a valid range between 1 and ${PaginationDetails.total}`);
+      op.current?.hide();
+    }
+    
   };
 
   const onPageChange = (e: PaginatorPageChangeEvent) => {
@@ -91,13 +100,14 @@ function App() {
           date_end: item.date_end,
         }
         ));
-        for (const item of formattedData) {
-          console.log(item.id);
-        }
+        // for (const item of formattedData) {
+        //   console.log(item.id);
+        // }
         setRows(formattedData);
         setLoading(false);
       })
       .catch((error) => {
+        toast.error('Error fetching data');
         console.error('Error fetching data:', error);
         setLoading(false);
       }
@@ -110,6 +120,11 @@ function App() {
 
   return (
     <div className="card">
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+      />
       <DataTable value={rows} selectionMode={'checkbox'} selection={getCurrentPageSelection()} onSelectionChange={handleSelectionChange} dataKey="id" tableStyle={{ minWidth: '50rem', marginBottom: '2rem' }}
         scrollable={true} scrollHeight="80vh"
       >
@@ -118,8 +133,7 @@ function App() {
         <Column field="id" header={
           <>
             <Button id='pi-chevron-down' type="button" icon="pi pi-chevron-down" onClick={(e) => op.current?.toggle(e)}
-              tooltip="Select multiple rows"
-              tooltipOptions={{ position: 'bottom' }} />
+        />
             Sr. No.
           </>
         }
