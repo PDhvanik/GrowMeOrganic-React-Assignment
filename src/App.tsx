@@ -5,7 +5,7 @@ import { DataTable } from 'primereact/datatable';
 import { InputText } from 'primereact/inputtext';
 import { OverlayPanel } from 'primereact/overlaypanel';
 import { Paginator } from 'primereact/paginator';
-import React, { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import './App.css';
 import type { PaginatorPageChangeEvent } from 'primereact/paginator';
 
@@ -30,10 +30,10 @@ interface PaginationDetails {
 }
 
 function App() {
-  const [products, setProducts] = useState<TableData[]>([]);
+  const [rows, setRows] = useState<TableData[]>([]);
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(true);
-  const [selectedProducts, setSelectedProducts] = useState<number[]>([]);
+  const [selectedIds, setSelectedIds] = useState<number[]>([]);
   const [PaginationDetails, setPaginationDetails] = useState<PaginationDetails>({
     total: 0,
     limit: 12,
@@ -46,12 +46,13 @@ function App() {
   const op = useRef<OverlayPanel>(null);
 
   const handleSelectionWithNumber = () => {
-    const numRows = Number(selectRange);
-    if (numRows >= 1 && numRows <= products.length) {
-      const selectedIds = products.slice(0, numRows).map(p => p.id);
-      const merged = Array.from(new Set([...selectedProducts, ...selectedIds]));
-      setSelectedProducts(merged);
-      op.current?.hide();
+    
+    const from = Number(selectRange.slice(0, selectRange.indexOf('-')));
+    const to = Number(selectRange.slice(selectRange.indexOf('-') + 1));
+    console.log(from, to);
+    const numRows = to - from + 1;
+    if (numRows >= 1 && numRows <= PaginationDetails.total) {
+      setSelectedIds([...selectedIds, ...Array.from({ length: numRows }, (_, i) => from + i)]);
     }
   };
 
@@ -63,15 +64,16 @@ function App() {
   }
 
   const getCurrentPageSelection = () => {
-    return products.filter(product => selectedProducts.includes(product.id));
+    return rows.filter(product => selectedIds.includes(product.id));
   };
 
   const handleSelectionChange = (e: any) => {
     const newSelection: TableData[] = e.value;
     const newIds = newSelection.map(p => p.id);
-    const currentPageIds = products.map(p => p.id);
-    const otherIds = selectedProducts.filter(id => !currentPageIds.includes(id));
-    setSelectedProducts([...otherIds, ...newIds]);
+    const currentPageIds = rows.map(p => p.id);
+    const otherIds = selectedIds.filter(id => !currentPageIds.includes(id));
+    setSelectedIds([...otherIds, ...newIds]);
+    
   };
 
   useEffect(() => {
@@ -92,7 +94,7 @@ function App() {
         for (const item of formattedData) {
           console.log(item.id);
         }
-        setProducts(formattedData);
+        setRows(formattedData);
         setLoading(false);
       })
       .catch((error) => {
@@ -108,20 +110,24 @@ function App() {
 
   return (
     <div className="card">
-      <DataTable value={products} selectionMode={'checkbox'} selection={getCurrentPageSelection()} onSelectionChange={handleSelectionChange} dataKey="id" tableStyle={{ minWidth: '50rem', marginBottom: '2rem' }}
+      <DataTable value={rows} selectionMode={'checkbox'} selection={getCurrentPageSelection()} onSelectionChange={handleSelectionChange} dataKey="id" tableStyle={{ minWidth: '50rem', marginBottom: '2rem' }}
         scrollable={true} scrollHeight="80vh"
       >
         <Column selectionMode="multiple"
         ></Column>
+        <Column field="id" header={
+          <>
+            <Button id='pi-chevron-down' type="button" icon="pi pi-chevron-down" onClick={(e) => op.current?.toggle(e)}
+              tooltip="Select multiple rows"
+              tooltipOptions={{ position: 'bottom' }} />
+            Sr. No.
+          </>
+        }
+          style={{ minWidth: '7rem' }}
+        ></Column>
         <Column field="title"
-          header={
-            <>
-              <Button id='pi-chevron-down' type="button" icon="pi pi-chevron-down" onClick={(e) => op.current?.toggle(e)}
-                tooltip="Select Rows In Range"
-                tooltipOptions={{ position: 'bottom' }} />
-              Title
-            </>
-          }
+          header='Title'
+          style={{ minWidth: '10rem' }}
         ></Column>
         <Column field="place_of_origin" header="Place Of Origin"></Column>
         <Column field="artist_display" header="Artist Display"></Column>
@@ -131,7 +137,7 @@ function App() {
       </DataTable>
       <Paginator first={(page - 1) * 12} rows={PaginationDetails.limit} totalRecords={PaginationDetails.total} onPageChange={onPageChange} template={{ layout: 'PrevPageLink PageLinks NextPageLink CurrentPageReport' }} />
       <OverlayPanel ref={op}>
-        <InputText min={1} max={PaginationDetails.total} value={selectRange} onChange={(e) => setSelectRange(e.target.value.replace(/\D/, ''))} placeholder='Select Rows...' />
+        <InputText min={1} max={PaginationDetails.total} value={selectRange} onChange={(e) => setSelectRange(e.target.value)} placeholder='Select Rows... [from-to]' />
         <Button type="button" icon="" label='Submit' onClick={handleSelectionWithNumber}
           disabled={
             !selectRange ||

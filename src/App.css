@@ -6,7 +6,7 @@ body {
 }
 
 #root {
-  max-width: 1280px;
+  width: 100vw;
   margin: 0 auto;
   padding: 1rem;
   text-align: center;
@@ -47,7 +47,7 @@ body {
   border-radius: 16px;
   box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
   padding: 1rem 1.5rem;
-  max-width: 1200px;
+  max-width: 100%;
 }
 
 .p-datatable {
@@ -170,7 +170,9 @@ body {
 
 .p-column-header-content{
   width: 100%;
-
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 #pi-chevron-down{
@@ -214,4 +216,8 @@ body {
   border: none;
   padding: 0.5rem;
   font-size: 0.9rem;
+}
+
+.p-tooltip .p-tooltip-text {
+  color: black !important;
 }
