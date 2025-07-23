@@ -135,7 +135,7 @@ function App() {
         <Column field="date_start" header="Date Start"></Column>
         <Column field="date_end" header="Date End"></Column>
       </DataTable>
-      <Paginator first={(page - 1) * 12} rows={PaginationDetails.limit} totalRecords={PaginationDetails.total} onPageChange={onPageChange} template={{ layout: 'PrevPageLink PageLinks NextPageLink CurrentPageReport' }} />
+      <Paginator first={(page - 1) * 12} rows={PaginationDetails.limit} totalRecords={PaginationDetails.total} onPageChange={onPageChange} template={{ layout: 'FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport' }} />
       <OverlayPanel ref={op}>
         <InputText min={1} max={PaginationDetails.total} value={selectRange} onChange={(e) => setSelectRange(e.target.value)} placeholder='Select Rows... [from-to]' />
         <Button type="button" icon="" label='Submit' onClick={handleSelectionWithNumber}
